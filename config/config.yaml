@@ -1,0 +1,65 @@
+# ============================================================
+# LineTriage Configuration
+# ============================================================
+
+# --- ESP32-CAM hardware ---
+esp32:
+  ip: "192.168.1.100"          # Change to your ESP32's IP
+  capture_endpoint: "/capture"
+  motor_endpoint: "/motor"
+  reject_endpoint: "/reject"
+  status_endpoint: "/status"
+  timeout_seconds: 5
+
+# --- ML model ---
+model:
+  path: "models/best.pt"
+  num_classes: 6
+  input_size: 640
+  class_names:
+    - open
+    - short
+    - mousebite
+    - spur
+    - copper
+    - pin-hole
+
+# --- Severity weights for priority queue ---
+severity_weights:
+  open: 5
+  short: 5
+  mousebite: 4
+  spur: 3
+  copper: 3
+  pin-hole: 4
+
+# --- Priority queue ---
+queue:
+  max_size: 5
+  alert_threshold: 4
+  adaptive_thresholds:
+    normal: 0.50
+    warning: 0.70
+    saturated: 0.85
+
+# --- Conveyor belt ---
+conveyor:
+  normal_speed: 200
+  slow_speed: 100
+  loop_delay_seconds: 3
+
+# --- Training ---
+training:
+  data_dir: "data/deeppcb_yolo"
+  batch_size: 16
+  num_epochs: 30
+  img_size: 640
+  patience: 5
+
+# --- DeepPCB conversion ---
+deeppcb:
+  raw_data_dir: "data/raw/PCBData"
+  yolo_output_dir: "data/deeppcb_yolo"
+  train_split: 0.8
+  val_split: 0.2
+  random_seed: 42
