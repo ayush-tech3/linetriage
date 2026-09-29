@@ -44,7 +44,7 @@ def main():
         imgsz=IMG_SIZE,
         batch=BATCH,
         patience=PATIENCE,
-        device=0,
+        device='cpu',
         project="pcb_defect_detection",
         name="yolov8n_deeppcb",
         pretrained=True,
