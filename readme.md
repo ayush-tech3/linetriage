@@ -13,11 +13,20 @@ LineTriage is a complete edge-AI pipeline that detects PCB surface defects on a 
 
 ### System Architecture
 
-```
-┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│  ESP32-CAM      │───▶│  Python Server   │───▶│  Priority Queue │───▶│  Actuation      │
-│  (Image Capture)│    │  (YOLOv8 Inference)│  │  (Severity × Conf)│  │  (Servo + Motor)│
-└─────────────────┘    └──────────────────┘    └─────────────────┘    └─────────────────┘
+```mermaid
+flowchart TD
+    CARD((Sample Card on Conveyor)) -->|Frame Capture| ESP[Edge Layer: ESP32-CAM]
+    ESP -->|HTTP Capture API| PRE[Preprocessing: Glare & Contrast Correction]
+    PRE -->|Optimized Frame| YOLO[AI Perception: YOLOv8 Object Detection]
+    YOLO -->|Detection & Confidence| TRIAGE[Triage Engine: Priority Scoring]
+    
+    TRIAGE -->|Defect / Rejection Match| SERVO[Actuation: Servo Rejection Gate]
+    TRIAGE -->|Review Match| QUEUE[Priority Queue: Heap Buffer]
+    
+    QUEUE -->|Manual Review| HUMAN((Human Inspector))
+    QUEUE -->|Queue Depth Feedback| MOTOR[Conveyor Control: L298N Motor Driver]
+    MOTOR -->|Adaptive Speed Control| CARD
+    SERVO -->|Card Ejection| BIN((Rejection Bin))
 ```
 
 ### Dataset — DeepPCB
